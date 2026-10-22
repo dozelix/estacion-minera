@@ -1,0 +1,4 @@
+.pio/
+.vscode/.cmake-db/
+.vscode/ipch/
+dist/
