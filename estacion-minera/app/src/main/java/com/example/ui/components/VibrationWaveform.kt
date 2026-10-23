@@ -63,7 +63,7 @@ fun VibrationWaveform(
     // MISMA altura que usa el Canvas, por eso las leyendas calzan con las líneas.
     val plotHeight: Dp = maxHeight - (Dimens.Spacing10 * 2)
     fun leyendaY(valor: Float): Dp =
-      Dimens.Spacing10 + (1f - valor / MAX_ESCALA) * plotHeight - 6.dp
+      Dimens.Spacing10 + plotHeight * (1f - valor / MAX_ESCALA) - 6.dp
 
     Canvas(modifier = Modifier.fillMaxSize()) {
       val width = size.width
@@ -160,40 +160,45 @@ fun VibrationWaveform(
         color = ScopeFrameworkText,
         fontSize = 11.sp,
         fontFamily = FontFamily.Monospace,
-        modifier = Modifier.align(Alignment.Center)
+        maxLines = 2,
+        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        modifier = Modifier
+          .align(Alignment.Center)
+          .padding(horizontal = 8.dp)
+      )
+    } else {
+      // Leyendas ALINEADAS a sus líneas de umbral (posición derivada de la escala)
+      Text(
+        text = "CRÍTICO (7.1 mm/s)",
+        color = IndustrialRed.copy(alpha = 0.6f),
+        fontSize = 9.sp,
+        fontFamily = FontFamily.Monospace,
+        modifier = Modifier
+          .align(Alignment.TopStart)
+          .padding(top = leyendaY(UMBRAL_CRITICO))
+      )
+
+      Text(
+        text = "ALERTA (4.5 mm/s)",
+        color = IndustrialYellow.copy(alpha = 0.6f),
+        fontSize = 9.sp,
+        fontFamily = FontFamily.Monospace,
+        modifier = Modifier
+          .align(Alignment.TopStart)
+          .padding(top = leyendaY(UMBRAL_ALERTA))
+      )
+
+      Text(
+        text = "RANGO NORMAL",
+        color = IndustrialGreen.copy(alpha = 0.6f),
+        fontSize = 9.sp,
+        fontFamily = FontFamily.Monospace,
+        modifier = Modifier
+          .align(Alignment.BottomStart)
+          .padding(bottom = Dimens.Spacing4)
       )
     }
-
-    // Leyendas ALINEADAS a sus líneas de umbral (posición derivada de la escala)
-    Text(
-      text = "CRÍTICO (7.1 mm/s)",
-      color = IndustrialRed.copy(alpha = 0.6f),
-      fontSize = 9.sp,
-      fontFamily = FontFamily.Monospace,
-      modifier = Modifier
-        .align(Alignment.TopStart)
-        .padding(top = leyendaY(UMBRAL_CRITICO))
-    )
-
-    Text(
-      text = "ALERTA (4.5 mm/s)",
-      color = IndustrialYellow.copy(alpha = 0.6f),
-      fontSize = 9.sp,
-      fontFamily = FontFamily.Monospace,
-      modifier = Modifier
-        .align(Alignment.TopStart)
-        .padding(top = leyendaY(UMBRAL_ALERTA))
-    )
-
-    Text(
-      text = "RANGO NORMAL",
-      color = IndustrialGreen.copy(alpha = 0.6f),
-      fontSize = 9.sp,
-      fontFamily = FontFamily.Monospace,
-      modifier = Modifier
-        .align(Alignment.BottomStart)
-        .padding(bottom = Dimens.Spacing4)
-    )
 
     val rmsText = if (currentRms != null) "%.2f mm/s".format(currentRms) else "-- mm/s"
     val rmsColor = if (currentRms != null) {

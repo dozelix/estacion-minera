@@ -7,12 +7,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -222,38 +227,53 @@ fun MonitoringScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
           ) {
-            // Operator info with high legibility
-            Column {
+            // Operator info with high legibility & flex containment
+            Column(
+              modifier = Modifier
+                .weight(1f)
+                .padding(end = Dimens.Spacing10)
+            ) {
               Text(
                 text = activeUser?.name ?: "Ing. Operador Minero",
                 fontWeight = FontWeight.Bold,
                 fontSize = if (isLarge) 16.sp else 14.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.onSurface
               )
               Text(
                 text = activeUser?.role ?: "Supervisor de Mantenimiento",
                 fontSize = if (isLarge) 13.sp else 12.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
               )
             }
 
-            // Connection State Chip (padre reutilizado)
-            ConnectionBadge(
-              connectionState = connectionState,
-              hasRecentRecord = packet != null,
-              isLarge = isLarge
-            )
+            // Connection State Chip (garantiza espacio fluido en una sola línea)
+            Box(modifier = Modifier.wrapContentWidth()) {
+              ConnectionBadge(
+                connectionState = connectionState,
+                hasRecentRecord = packet != null,
+                isLarge = isLarge
+              )
+            }
           }
 
           Spacer(modifier = Modifier.height(Dimens.Spacing12))
 
-          // Resiliency Indicator (Doze / Screen off service)
+          // Resiliency Indicator (Doze / Screen off service) (FIX 3)
           Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
           ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+              verticalAlignment = Alignment.CenterVertically,
+              modifier = Modifier
+                .weight(1f)
+                .padding(end = Dimens.Spacing8)
+            ) {
               Icon(
                 imageVector = Icons.Default.NotificationsActive,
                 contentDescription = null,
@@ -265,7 +285,9 @@ fun MonitoringScreen(
                 text = "Servicio con Pantalla Apagada",
                 fontSize = bodyFontSize,
                 fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
               )
             }
 
@@ -345,10 +367,12 @@ fun MonitoringScreen(
 
           Spacer(modifier = Modifier.height(Dimens.Spacing16))
 
-          // Action Buttons: Disparo Preventivo / Rearmar Relé (≥48dp targets)
+          // Action Buttons: Disparo Preventivo / Rearmar Relé (FIX 1: altura simétrica e intrinsic height)
           Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Dimens.Spacing12)
+            modifier = Modifier
+              .fillMaxWidth()
+              .height(IntrinsicSize.Min),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
           ) {
             Button(
               onClick = { viewModel.setTripConfirmDialog(true) },
@@ -359,12 +383,24 @@ fun MonitoringScreen(
               shape = MaterialTheme.shapes.medium,
               modifier = Modifier
                 .weight(1f)
-                .height(buttonHeight)
+                .fillMaxHeight()
+                .defaultMinSize(minHeight = 50.dp)
                 .testTag("trip_relay_button")
             ) {
-              Icon(Icons.Default.PowerOff, contentDescription = null, modifier = Modifier.size(Dimens.IconMd))
-              Spacer(modifier = Modifier.width(Dimens.Spacing6))
-              Text("Disparo Preventivo", fontSize = if (isLarge) 14.sp else 13.sp, fontWeight = FontWeight.Bold)
+              Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+              ) {
+                Icon(Icons.Default.PowerOff, contentDescription = null, modifier = Modifier.size(Dimens.IconMd))
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                  text = "Disparo Preventivo",
+                  fontSize = 13.sp,
+                  fontWeight = FontWeight.Bold,
+                  maxLines = 2,
+                  overflow = TextOverflow.Ellipsis
+                )
+              }
             }
 
             Button(
@@ -376,12 +412,24 @@ fun MonitoringScreen(
               shape = MaterialTheme.shapes.medium,
               modifier = Modifier
                 .weight(1f)
-                .height(buttonHeight)
+                .fillMaxHeight()
+                .defaultMinSize(minHeight = 50.dp)
                 .testTag("reset_relay_button")
             ) {
-              Icon(Icons.Default.RestartAlt, contentDescription = null, modifier = Modifier.size(Dimens.IconMd))
-              Spacer(modifier = Modifier.width(Dimens.Spacing6))
-              Text("Rearmar Relé", fontSize = if (isLarge) 14.sp else 13.sp, fontWeight = FontWeight.Bold)
+              Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+              ) {
+                Icon(Icons.Default.RestartAlt, contentDescription = null, modifier = Modifier.size(Dimens.IconMd))
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                  text = "Rearmar Relé",
+                  fontSize = 13.sp,
+                  fontWeight = FontWeight.Bold,
+                  maxLines = 2,
+                  overflow = TextOverflow.Ellipsis
+                )
+              }
             }
           }
 
@@ -412,22 +460,30 @@ fun MonitoringScreen(
 
           Spacer(modifier = Modifier.height(Dimens.Spacing12))
 
-          // Auto-Trip Protection Switch
+          // Auto-Trip Protection Switch (FIX 2: contraerse, nunca empujar fuera)
           Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
           ) {
-            Column {
+            Column(
+              modifier = Modifier
+                .weight(1f)
+                .padding(end = Dimens.Spacing12)
+            ) {
               Text(
                 text = "Protección Auto-Trip (Desconexión Automática)",
                 fontSize = bodyFontSize,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
               )
               Text(
                 text = "Apertura automática de relé si vibración crítica >= 7.1 mm/s",
                 fontSize = if (isLarge) 12.sp else 11.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
               )
             }
             Switch(
@@ -947,13 +1003,13 @@ fun TelemetryRow(label: String, value: String, isLarge: Boolean = false) {
 fun ConnectionBadge(connectionState: ConnectionState, hasRecentRecord: Boolean, isLarge: Boolean = false) {
   val status = industrialStatusColors()
   val (color, text, icon) = when (connectionState) {
-    ConnectionState.CONNECTED -> Triple(status.success, "CONECTADO A NODO", Icons.Default.Wifi)
-    ConnectionState.SIMULATING -> Triple(status.info, "MODO TEST ACTIVO", Icons.Default.Speed)
+    ConnectionState.CONNECTED -> Triple(status.success, "CONECTADO", Icons.Default.Wifi)
+    ConnectionState.SIMULATING -> Triple(status.info, "MODO TEST", Icons.Default.Speed)
     ConnectionState.CONNECTING -> Triple(status.alert, "CONECTANDO...", Icons.Default.Refresh)
     ConnectionState.RECONNECTING -> Triple(status.alert, "RECONECTANDO...", Icons.Default.Refresh)
     ConnectionState.DISCONNECTED -> {
       if (hasRecentRecord) {
-        Triple(status.muted, "ÚLTIMO REGISTRO TCP", Icons.Default.WifiOff)
+        Triple(status.muted, "ÚLTIMO REGISTRO", Icons.Default.WifiOff)
       } else {
         Triple(status.danger, "DESCONECTADO", Icons.Default.WifiOff)
       }

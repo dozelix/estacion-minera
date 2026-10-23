@@ -1,6 +1,7 @@
 package com.example.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -37,14 +38,20 @@ fun StatusBadge(
   isLarge: Boolean = false,
   pill: Boolean = false,
 ) {
+  val shape = if (pill) RoundedCornerShape(20.dp) else MaterialTheme.shapes.small
   Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = modifier
       .background(
-        color = color.copy(alpha = 0.15f),
-        shape = if (pill) RoundedCornerShape(20.dp) else MaterialTheme.shapes.small
+        color = color.copy(alpha = 0.12f),
+        shape = shape
       )
-      .padding(horizontal = 12.dp, vertical = 6.dp)
+      .border(
+        width = 1.dp,
+        color = color.copy(alpha = 0.28f),
+        shape = shape
+      )
+      .padding(horizontal = 10.dp, vertical = 5.dp)
   ) {
     Icon(
       imageVector = icon,
@@ -56,9 +63,12 @@ fun StatusBadge(
     Text(
       text = text,
       color = color,
-      fontSize = if (isLarge || pill) 13.sp else 12.sp,
+      fontSize = if (isLarge) 12.sp else 11.sp,
       fontWeight = FontWeight.Bold,
-      fontFamily = FontFamily.Monospace
+      fontFamily = FontFamily.Monospace,
+      maxLines = 1,
+      softWrap = false,
+      letterSpacing = 0.2.sp
     )
   }
 }

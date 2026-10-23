@@ -47,8 +47,8 @@ private val DarkColorScheme =
     inverseOnSurface = IndustrialDarkBg,
     error = IndustrialRed,
     onError = Color.Black,
-    errorContainer = Color(0xFF2A1215),
-    onErrorContainer = Color(0xFFFFB4A3),
+    errorContainer = Color(0xFF25191C),
+    onErrorContainer = Color(0xFFFECDD3),
     scrim = Color(0xFF000000),
   )
 

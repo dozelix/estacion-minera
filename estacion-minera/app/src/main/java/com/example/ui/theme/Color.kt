@@ -12,13 +12,13 @@ import androidx.compose.ui.graphics.Color
  * ========================================================================== */
 
 // --- Acentos de marca (se usan en contenedores/bordes seguros en ambos temas)
-val IndustrialAmber = Color(0xFFFF8F00)      // ámbar de operación / botón primario
-val IndustrialAmberLight = Color(0xFFFFB74D) // ámbar sobre contenedores dark
+val IndustrialAmber = Color(0xFFF59E0B)      // ámbar suave de operación / botón primario
+val IndustrialAmberLight = Color(0xFFFDE68A) // ámbar claro suave sobre contenedores dark
 
-val IndustrialCyan = Color(0xFF00B0FF)       // acento de datos/terminal (dark)
-val IndustrialGreen = Color(0xFF00E676)      // acento de éxito (dark)
-val IndustrialRed = Color(0xFFFF3D00)        // acento de emergencia (dark)
-val IndustrialYellow = Color(0xFFFFD600)     // acento de alerta (dark)
+val IndustrialCyan = Color(0xFF38BDF8)       // acento cian suave cielo
+val IndustrialGreen = Color(0xFF4ADE80)      // acento verde suave equilibrado
+val IndustrialRed = Color(0xFFF87171)        // acento rojo coral suave, descansado a la vista
+val IndustrialYellow = Color(0xFFFBBF24)     // acento amarillo/ámbar cálido
 
 // --- Superficies del tema oscuro industrial
 val IndustrialDarkBg = Color(0xFF0B1017)
@@ -58,18 +58,18 @@ fun industrialStatusColors(): IndustrialStatusColors {
   val isDark = isSystemInDarkTheme()
   return if (isDark) {
     IndustrialStatusColors(
-      success = IndustrialGreen,             // 00E676 sobre 141D29
-      alert = IndustrialYellow,              // FFD600 sobre 141D29
-      info = IndustrialCyan,                 // 00B0FF sobre 141D29
-      danger = IndustrialRed,                // FF3D00 sobre 141D29
-      muted = Color(0xFF94A3B8)
+      success = Color(0xFF4ADE80),           // verde suave armónico, no estridente (8:1 contraste)
+      alert = Color(0xFFFBBF24),             // ámbar suave cálido
+      info = Color(0xFF38BDF8),              // cian suave cielo
+      danger = Color(0xFFF87171),            // rojo coral suave, descansado a la vista
+      muted = Color(0xFF94A3B8)              // slate neutro equilibrado
     )
   } else {
     IndustrialStatusColors(
-      success = Color(0xFF1B5E20),           // verde oscuro sobre blanco/slate
-      alert = Color(0xFFB26A00),             // ámbar oscuro legible
-      info = Color(0xFF0277BD),              // cian oscuro legible
-      danger = Color(0xFFC62828),            // rojo oscuro legible
+      success = Color(0xFF15803D),           // verde oscuro elegante
+      alert = Color(0xFFB45309),             // ámbar oscuro legible
+      info = Color(0xFF0369A1),              // cian oscuro legible
+      danger = Color(0xFFB91C1C),            // rojo oscuro suave
       muted = Color(0xFF64748B)
     )
   }
