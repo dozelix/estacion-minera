@@ -1,6 +1,0 @@
-{
-  "summary":  "Plan de implementación enriquecido con resiliencia ante apagado de pantalla (Foreground Service con notificación de estado persistente), tolerancia a microcortes de Wi-Fi (reconexión automática defensiva en Dispatchers.IO), retención ante rotación de pantalla en ViewModel, y validación en red mediante script de Python para la Evaluación Sumativa 2 (TI3042).",
-  "updatedAt":  "2026-10-21T17:43:47.740350634Z",
-  "requestFeedback":  true,
-  "userFacing":  true
-}

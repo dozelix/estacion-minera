@@ -1,6 +1,0 @@
-{
-  "name": "Estación Minera TI3042",
-  "description": "Estación de Supervisión y Mantenimiento Predictivo para Motores Mineros (IoT) con autenticación segura, cliente TCP en tiempo real y tolerancia a rotación.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
