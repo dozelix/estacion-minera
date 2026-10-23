@@ -3,6 +3,8 @@
 **Evaluación Sumativa 2 (ES2) — Asignatura TI3042: Aplicaciones Móviles para IoT / Sistemas y Redes Industriales**  
 **Proyecto:** Estación Móvil de Supervisión y Control para Motores Mineros (Chancado y Molienda) con Disparo de Relé por Vibración ISO 10816-3.
 
+![Panel de Supervisión en Vivo — APK Android nativo con telemetría ISO 10816-3](docs/img/demo-monitoreo-datos.png)
+
 ---
 
 ## 1. Descripción del Sistema
@@ -11,7 +13,21 @@ La **Estación Minera TI3042** es una estación de supervisión de alta fiabilid
 
 ---
 
-## 2. Características Principales Portadas
+## 2. Capturas de Pantalla — APK Nativo Ejecutándose
+
+Capturas directas del build nativo Kotlin/Jetpack Compose corriendo en el emulador de Google AI Studio.
+
+| Autenticación Cifrada (ISO 27400) | Registro de Operador | Configuración de Enlace TCP |
+|:---:|:---:|:---:|
+| ![Login con credenciales protegidas](docs/img/demo-login.png) | ![Registro de operador de faena](docs/img/demo-registro.png) | ![Diálogo de configuración de enlace TCP](docs/img/demo-config-enlace.png) |
+
+| Estado Sin Enlace (Auto-Trip armado, gráfico vacío limpio) | Modo Horizontal — Motor Minero #01 |
+|:---:|:---:|
+| ![Panel de monitoreo sin enlace](docs/img/demo-monitoreo-sin-enlace.png) | ![Vista horizontal de la estación](docs/img/demo-monitoreo-horizontal.png) |
+
+---
+
+## 3. Características Principales Portadas
 
 1. **Autenticación Cifrada Segura (ISO 27400):**
    - Emulación de almacenamiento criptográfico con AES-256 GCM (`EncryptedAuthStore`).
@@ -41,29 +57,41 @@ La **Estación Minera TI3042** es una estación de supervisión de alta fiabilid
 
 ---
 
-## 3. Estructura del Proyecto
+## 4. Estructura del Proyecto
+
+Código fuente consolidado en la raíz — lo mínimo necesario para compilar el APK y el firmware.
 
 ```
 IOT_E2/
-├── src/                          ← Implementación Web/React en AI Studio
-│   ├── components/               (Osciloscopio Canvas, StatusBadge, TerminalModal, ConnectionModal, DeviceFrame)
-│   ├── screens/                  (LoginScreen, MonitoringScreen)
-│   ├── services/                 (authStore ISO 27400, sensorSimulator, tcpClient)
-│   ├── theme/                    (tokens industriales, colores de estado semánticos)
-│   └── types/                    (contratos de telemetría y tramas JSON)
-├── estacion-minera/              ← Código fuente Android nativo (Kotlin + Jetpack Compose)
-│   ├── app/src/main/java/com/example/
-│   │   ├── ui/                   (LoginScreen.kt, MonitoringScreen.kt)
-│   │   ├── network/              (TcpSocketClient.kt, SensorSimulator.kt)
-│   │   ├── model/                (TelemetryModels.kt)
-│   │   └── security/             (EncryptedAuthStore.kt)
-│   └── tools/sensor_node_simulator.py  ← Simulador TCP de nodo sensor en Python
-└── firmware/                     ← Firmware ESP32 PlatformIO (src/main.cpp monolito)
+├── app/src/main/java/com/example/
+│   ├── ui/              (LoginScreen.kt, MonitoringScreen.kt, components/, theme/)
+│   ├── network/         (TcpSocketClient.kt, SensorSimulator.kt — cliente TCP :8080)
+│   ├── model/           (TelemetryModels.kt — contratos JSON de telemetría)
+│   ├── security/        (EncryptedAuthStore.kt — AES-256 GCM, ISO 27400)
+│   └── service/         (MonitoringForegroundService.kt — resiliente a Doze)
+├── gradle/, build.gradle.kts, settings.gradle.kts   ← Proyecto Android estándar
+├── tools/sensor_node_simulator.py   ← FUENTE DE VERDAD del protocolo (nodo sensor Python)
+├── firmware/            ← ESP32 PlatformIO (src/main.cpp monolito)
+├── docs/img/            ← Capturas del APK en ejecución
+└── docs/README-ANDROID.md ← Diseño y problemática del producto (documento detallado)
 ```
 
 ---
 
-## 4. Ejecución
+## 5. Ejecución e Instalación
 
-- **Servidor de desarrollo:** `npm run dev` (escucha en `0.0.0.0:3000`)
-- **Compilación de producción:** `npm run build`
+**Compilación del APK** (esta máquina solo edita; el build se hace externo):
+- **Google AI Studio** (flujo del proyecto): repo importado como proyecto nativo Kotlin → build → **descargar el APK**.
+- **Android Studio** (alternativa en otra máquina): abrir la raíz del repo (`settings.gradle.kts` importa `:app`).
+
+**Instalación vía ADB** (con el teléfono conectado y la depuración USB autorizada):
+
+```bash
+adb install -r <ruta>/estacion-minera.apk
+```
+
+**Nodo sensor (lado servidor TCP :8080)**: la app es cliente TCP.
+- Simulador en PC: `python3 tools/sensor_node_simulator.py`
+- Hardware real: cargar `firmware/` con `pio run -t upload` (ESP32 + MPU6050 + relé GPIO 26).
+
+---

@@ -13,17 +13,25 @@ Proyecto **público en GitHub**: cero secretos, cero tokens, cero keystores en e
 
 ```
 IOT_E2/
-├── estacion-minera/      ← App Android (Kotlin + Jetpack Compose; origen AI Studio)
+├── app/ + gradle/ + build.gradle.kts + settings.gradle.kts
+│   ← App Android (Kotlin + Jetpack Compose) consolidada EN LA RAÍZ (única copia)
 │   ├── app/src/main/java/com/example/
 │   │   ├── ui/            (LoginScreen, MonitoringScreen, components/, theme/)
 │   │   ├── network/       (TcpSocketClient — cliente TCP)
 │   │   ├── model/         (TelemetryModels — contratos JSON)
 │   │   ├── security/      (EncryptedAuthStore)
 │   │   └── service/       (MonitoringForegroundService — Doze)
-│   └── tools/sensor_node_simulator.py   ← FUENTE DE VERDAD del protocolo
+├── tools/sensor_node_simulator.py   ← FUENTE DE VERDAD del protocolo
 ├── firmware/              ← ESP32 PlatformIO (src/main.cpp monolito)
+├── docs/img/              ← Capturas del APK (incluidas en README)
+├── docs/README-ANDROID.md ← Documento de diseño del APK (problemática/arquitectura)
 └── TI3042_U2_ES_GUÍA.docx (material del curso — NO se sube al repo)
 ```
+
+**Única copia (22-oct-2026)**: la carpeta histórica `estacion-minera/` y el
+applet React de AI Studio fueron eliminados del repo (referencias
+recuperables del git history). El código Android editable vive SOLO en la
+raíz (`app/src/main/java/com/example/`).
 
 ## Normas firmware (decididas, no negociar sin discutir)
 
@@ -60,9 +68,12 @@ IOT_E2/
 
 ## Compilación (gotchas)
 
-- Esta máquina (Celeron/4 GB) solo EDITA: **no hay Android Studio instalado**
-  — los builds de la app se hacen en **Google AI Studio** (flujo actual del
-  usuario); ESP32 con `pio run` si hay toolchain, si no en otra máquina.
+- **Compilación**: esta máquina (Celeron/4 GB) **EDITA e INSTALA**: no hay
+  Android Studio ni SDK. El APK se compila en **Google AI Studio** (proyecto
+  nativo importado del repo) y se descarga; instalación local con
+  `adb install -r <apk>` (adb presente). Alternativa: Android Studio en otra
+  máquina. El repo no lleva `gradlew`/wrapper jar: build CLI local requiere
+  Gradle instalado; ESP32 con `pio run` si hay toolchain.
 - **`debug.keystore` no existe** (el `build.gradle.kts` de AI Studio lo
   referencia y NO hay que tocar los signingConfigs). Para compilar debug
   local generar antes:
@@ -71,7 +82,8 @@ IOT_E2/
     -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 \
     -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
   ```
-- `.env` solo placeholder comentado (`GEMINI_API_KEY` sin usar) — no descomentar.
+- Sin `.env` en el árbol (eliminado al consolidar): repo público, sin
+  secretos; `GEMINI_API_KEY` nunca se usa.
 
 ## Repo público (postura de seguridad)
 
